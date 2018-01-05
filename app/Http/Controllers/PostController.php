@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Post;
 
 use App\Http\Requests\StorePost as StorePostRequest;
+use App\Http\Requests\UpdatePost as UpdatePostRequest;
 use Auth;
 use Gate;
 
@@ -39,5 +40,18 @@ class PostController extends Controller
 	    }
 	    $posts = $postsQuery->paginate();
 	    return view('posts.drafts', compact('posts'));
+	}
+
+	public function edit(Post $post)
+	{
+	    return view('posts.edit', compact('post'));
+	}
+
+	public function update(Post $post, UpdatePostRequest $request)
+	{
+	    $data = $request->only('title', 'body');
+	    $data['slug'] = str_slug($data['title']);
+	    $post->fill($data)->save();
+	    return back();
 	}
 }
